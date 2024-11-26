@@ -42,16 +42,24 @@
     .counter span {
     font-size: 24px;
   }
-    select, input[type="text"] {
-      margin-bottom: 10px;
-      font-size: 17px;
-      padding: 5px;
-      width: 100%;
-    }
-    button {
-      font-size: 17px;
-      padding: 5px;
-    }
+  select, input[type="text"] {
+    margin-bottom: 10px;
+    font-size: 17px;
+    padding: 5px;
+    width: 100%;
+  }
+  button {
+    font-size: 17px;
+    padding: 5px;
+  }
+  .counter input[type="text"] {
+    font-size: 12px; /* フォントサイズ */
+    padding: 5px; /* 内側の余白 */
+    width: 250px; /* 入力欄の幅 */
+    border: 1px solid #ccc; /* 枠線の色 */
+    border-radius: 5px; /* 角を丸める */
+    box-sizing: border-box; /* 幅計算を調整 */
+  }
   </style>
 </head>
 <body>
@@ -144,7 +152,7 @@
       decrementBtn.onclick = () => {
         if (!counterFlags[index]) updateCounter(index, -1);
       };
-      
+
       // + ボタン
       const incrementBtn = document.createElement("button");
       incrementBtn.textContent = "+";
