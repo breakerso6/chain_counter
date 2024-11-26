@@ -53,12 +53,7 @@
     padding: 5px;
   }
   .counter input[type="text"] {
-    font-size: 12px; /* フォントサイズ */
-    padding: 5px; /* 内側の余白 */
-    width: 250px; /* 入力欄の幅 */
-    border: 1px solid #ccc; /* 枠線の色 */
-    border-radius: 5px; /* 角を丸める */
-    box-sizing: border-box; /* 幅計算を調整 */
+    font-size: 12px;
   }
   </style>
 </head>
@@ -167,8 +162,8 @@
 
       // 各ボタンを追加
       controlsDiv.appendChild(resetBtn);
-      controlsDiv.appendChild(incrementBtn);
       controlsDiv.appendChild(decrementBtn);
+      controlsDiv.appendChild(incrementBtn);
       controlsDiv.appendChild(infinityBtn);
 
       counterDiv.appendChild(imageElement);
