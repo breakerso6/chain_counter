@@ -138,18 +138,18 @@
       resetBtn.textContent = "0";
       resetBtn.onclick = () => resetCounter(index);
 
-      // + ボタン
-      const incrementBtn = document.createElement("button");
-      incrementBtn.textContent = "+";
-      incrementBtn.onclick = () => {
-        if (!counterFlags[index]) updateCounter(index, 1);
-      };
-
       // - ボタン
       const decrementBtn = document.createElement("button");
       decrementBtn.textContent = "-";
       decrementBtn.onclick = () => {
         if (!counterFlags[index]) updateCounter(index, -1);
+      };
+      
+      // + ボタン
+      const incrementBtn = document.createElement("button");
+      incrementBtn.textContent = "+";
+      incrementBtn.onclick = () => {
+        if (!counterFlags[index]) updateCounter(index, 1);
       };
 
       // ∞ ボタン
