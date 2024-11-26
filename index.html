@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>カウンター</title>
+  <style>
+    .counter-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* レスポンシブ対応 */
+      gap: 20px; /* 各カウンター間のスペース */
+      justify-items: center;
+      margin-top: 20px;
+      width: 100%; /* 全幅対応 */
+    }
+    .counter {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 2px solid #0073e6;
+      border-radius: 8px;
+      padding: 10px;
+      background-color: #005f99;
+      color: white;
+      width: 180px;
+    }
+    .counter img {
+      width: 128px;
+      height: 72px;
+      margin-bottom: 10px;
+    }
+    .counter .controls {
+      display: flex;
+      gap: 5px;
+      margin-top: 10px;
+    }
+    .counter span {
+    font-size: 24px;
+  }
+    select, input[type="text"] {
+      margin-bottom: 10px;
+      font-size: 17px;
+      padding: 5px;
+      width: 100%;
+    }
+    button {
+      font-size: 17px;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>カウンター</h1>
+<div class="counter-container">
+  <button onclick="addCounter()">カウンターを追加</button>
+  <button onclick="removeCounter()">カウンターを削除</button>
+  <div id="counters" class="grid"></div>
+</div>
+
+<script>
+  // 事前に用意した画像の一覧
+  const availableImages = [
+    { url: "https://via.placeholder.com/80/FF0000", name: "赤" },
+    { url: "https://via.placeholder.com/80/00FF00", name: "緑" },
+    { url: "https://via.placeholder.com/80/0000FF", name: "青" },
+    { url: "https://via.placeholder.com/80/FFFF00", name: "黄色" },
+    { url: "https://via.placeholder.com/80/FF00FF", name: "紫" },
+  ];
+
+  // カウンターの初期状態
+  let counters = [];
+  let counterImages = [];
+  let counterFlags = []; // フラグ (true: ∞, false: 通常の数値)
+
+  // カウンター要素を表示
+  function renderCounters() {
+    const countersContainer = document.getElementById("counters");
+    countersContainer.innerHTML = ""; // 既存のカウンターをクリア
+
+    counters.forEach((value, index) => {
+      const counterDiv = document.createElement("div");
+      counterDiv.className = "counter";
+
+      const imageElement = document.createElement("img");
+      imageElement.src = counterImages[index] || "https://via.placeholder.com/80"; // デフォルト画像
+      imageElement.alt = "画像";
+
+      // ドロップダウンメニューの作成
+      const selectElement = document.createElement("select");
+      selectElement.onchange = () => updateCounterImage(index, selectElement.value);
+
+      availableImages.forEach(({ url, name }) => {
+        const option = document.createElement("option");
+        option.value = url;
+        option.textContent = name;
+        if (url === counterImages[index]) {
+          option.selected = true;
+        }
+        selectElement.appendChild(option);
+      });
+
+      // URL入力欄の作成
+      const urlInput = document.createElement("input");
+      urlInput.type = "text";
+      urlInput.placeholder = "画像URLを入力";
+      urlInput.value = counterImages[index] || "";
+      urlInput.oninput = () => updateCounterImage(index, urlInput.value);
+
+      const counterText = document.createElement("span");
+      counterText.id = `counter-value-${index}`;
+      counterText.textContent = counterFlags[index] ? "∞" : `${value}`;
+
+      const controlsDiv = document.createElement("div");
+      controlsDiv.className = "controls";
+
+      // 0ボタン (リセット)
+      const resetBtn = document.createElement("button");
+      resetBtn.textContent = "0";
+      resetBtn.onclick = () => resetCounter(index);
+
+      // + ボタン
+      const incrementBtn = document.createElement("button");
+      incrementBtn.textContent = "+";
+      incrementBtn.onclick = () => {
+        if (!counterFlags[index]) updateCounter(index, 1);
+      };
+
+      // - ボタン
+      const decrementBtn = document.createElement("button");
+      decrementBtn.textContent = "-";
+      decrementBtn.onclick = () => {
+        if (!counterFlags[index]) updateCounter(index, -1);
+      };
+
+      // ∞ ボタン
+      const infinityBtn = document.createElement("button");
+      infinityBtn.textContent = "∞";
+      infinityBtn.onclick = () => toggleInfinity(index);
+
+      // 各ボタンを追加
+      controlsDiv.appendChild(resetBtn);
+      controlsDiv.appendChild(incrementBtn);
+      controlsDiv.appendChild(decrementBtn);
+      controlsDiv.appendChild(infinityBtn);
+
+      counterDiv.appendChild(imageElement);
+      counterDiv.appendChild(selectElement);
+      counterDiv.appendChild(urlInput);
+      counterDiv.appendChild(counterText);
+      counterDiv.appendChild(controlsDiv);
+      countersContainer.appendChild(counterDiv);
+    });
+  }
+
+  // カウンターを追加
+  function addCounter() {
+    counters.push(0); // 新しいカウンターの初期値は0
+    counterImages.push(availableImages[0].url); // 初期画像を設定
+    counterFlags.push(false); // 初期状態は∞でない
+    renderCounters();
+  }
+
+  // カウンターを削除
+  function removeCounter() {
+    if (counters.length > 0) {
+      counters.pop(); // 最後のカウンターを削除
+      counterImages.pop(); // 最後の画像URLも削除
+      counterFlags.pop(); // フラグも削除
+      renderCounters();
+    }
+  }
+
+  // カウンターの値を更新
+  function updateCounter(index, delta) {
+    counters[index] += delta;
+    document.getElementById(`counter-value-${index}`).textContent = counterFlags[index] ? "∞" : `${counters[index]}`;
+  }
+
+  // カウンターの値をゼロにリセット
+  function resetCounter(index) {
+    counters[index] = 0;
+    counterFlags[index] = false; // リセット時にはフラグも解除
+    document.getElementById(`counter-value-${index}`).textContent = `${counters[index]}`;
+  }
+
+  // カウンターの画像URLを更新
+  function updateCounterImage(index, newImageUrl) {
+    counterImages[index] = newImageUrl;
+    const imageElement = document.querySelectorAll(".counter img")[index];
+    imageElement.src = newImageUrl;
+  }
+
+  // カウンターのフラグを切り替え
+  function toggleInfinity(index) {
+    counterFlags[index] = !counterFlags[index];
+    document.getElementById(`counter-value-${index}`).textContent = counterFlags[index] ? "∞" : `${counters[index]}`;
+  }
+
+  // 初期のカウンターをいくつか追加
+  for (let i = 0; i < 6; i++) {
+    addCounter();
+  }
+</script>
+
+</body>
+</html>
