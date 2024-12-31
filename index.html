@@ -29,6 +29,10 @@
       color: white;
       width: 160px;
     }
+    .counter.non-zero {
+      background-color: #ff2b00;
+      border: 2px solid #EE0000;
+    }
     .counter img {
       width: 160px;
       height: 90px;
@@ -90,7 +94,8 @@
     { url: "./imgs/imish/スライド17.PNG", name: "グラスパー" },
     { url: "./imgs/imish/スライド18.PNG", name: "ウォカンナ" },
     { url: "./imgs/imish/スライド19.PNG", name: "アシッド" },
-    { url: "./imgs/imish/スライド20.PNG", name: "ACE-Curase" }
+    { url: "./imgs/imish/スライド20.PNG", name: "ACE-Curase" },
+    { url: "./imgs/imish/スライド21.PNG", name: "エツナブ" }
   ];
 
   const availableImages_marshall = [
@@ -217,14 +222,26 @@
   // カウンターの値を更新
   function updateCounter(index, delta) {
     counters[index] += delta;
+    if (counters[index] < 0) counters[index] = 0; // カウンターの値は0以上
+    const counterValueElement = document.getElementById(`counter-value-${index}`);
+    const counterDiv = counterValueElement.parentElement;
     document.getElementById(`counter-value-${index}`).textContent = counterFlags[index] ? "∞" : `${counters[index]}`;
+
+    if(counters[index] === 0) {
+      counterDiv.classList.remove("non-zero");
+    } else {
+      counterDiv.classList.add("non-zero");
+    }
   }
 
   // カウンターの値をゼロにリセット
   function resetCounter(index) {
     counters[index] = 0;
     counterFlags[index] = false; // リセット時にはフラグも解除
+    const counterValueElement = document.getElementById(`counter-value-${index}`);
+    const counterDiv = counterValueElement.parentElement;
     document.getElementById(`counter-value-${index}`).textContent = `${counters[index]}`;
+    counterDiv.classList.remove("non-zero");
   }
 
   // カウンターの画像URLを更新
